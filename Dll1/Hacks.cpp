@@ -95,9 +95,7 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 
 		}
 	}
-				printf("NUMPAD 9 Pressed\n");
-					Sleep(100);
-				if (GetAsyncKeyState(VK_UP) && GetAsyncKeyState(VK_NUMPAD9))
+				if (GetAsyncKeyState(VK_UP) && GetAsyncKeyState(VK_SHIFT))
 				{
 					printf("Up Pressed\n");
 					this->sMagAmmo = this->sMagAmmo + 10;
@@ -106,16 +104,16 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 
 					return;
 				}
-				if (GetAsyncKeyState(VK_DOWN))
+				if (GetAsyncKeyState(VK_DOWN) && GetAsyncKeyState(VK_SHIFT))
 				{
-					this->sMagAmmo = this->sMagAmmo - 10;
+					this->sMagAmmo = sMagAmmo - 10;
 					printf("Down Pressed\n");
 
 					Sleep(100);
 
 					return;
 				}
-				if (GetAsyncKeyState(VK_RIGHT) )
+				if (GetAsyncKeyState(VK_RIGHT) && GetAsyncKeyState(VK_SHIFT) )
 				{
 					this->fFov = this->fFov + 5;
 
@@ -126,7 +124,7 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 
 					return;
 				}
-				if (GetAsyncKeyState(VK_LEFT))
+				if (GetAsyncKeyState(VK_LEFT) && GetAsyncKeyState(VK_SHIFT))
 				{
 					printf("Left Pressed\n");
 					this->fFov = this->fFov - 5;
