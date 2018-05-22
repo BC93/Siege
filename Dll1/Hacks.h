@@ -31,6 +31,7 @@ class NetManager;
 class NetEntities_pRef_1;
 class NetEntities_pRef_2;
 class NetEntities;
+class FovManager;
 
 class Hacks
 {
@@ -40,11 +41,15 @@ public:
 	bool bFireRate = false;
 	bool bNoReload = false;
 	bool bInfiniteAmmo = false;
+	float fFov = 100;
+	float fSpreadVal = 0.5;
+	DWORD sMagAmmo = 25;
 	DWORD_PTR Base;
 	WeaponManager *cWeaponManager;
 	WeaponComponent *pWeap;
 	Entity * EntityLocalPlayer;
 	BYTE dFireMode;
+	void SetFOV();
 	bool Init();
 	void NameManagerInit(char* name);
 	void GetEntities();
@@ -55,6 +60,21 @@ public:
 	void GetMessage();
 	void Command();
 };
+
+class FovManager
+{
+public:
+private:
+	char pad_0x0000[0x418]; //0x0000
+public:
+	float fFOV_1; //0x0418 
+private:
+	char pad_0x041C[0x48C]; //0x041C
+public:
+	float fFOV_2; //0x08A8 
+
+}; //Size=0x08AC
+
 class NetManager
 {
 public:
@@ -115,6 +135,43 @@ public:
 	DWORD dMagAmmo; //0x0170 
 	DWORD dReserveAmmo; //0x0174 
 private:
+	char pad_0x0178[0x108]; //0x0178
+public:
+	Vector3 vSpread; //0x0280 
+private:
+	char pad_0x028C[0x24]; //0x028C
+public:
+	float fMaxSpread; //0x02B0 
+private:
+	char pad_0x02B4[0x24]; //0x02B4
+public:
+	float fMaxRecoil; //0x02D8 
+private:
+	char pad_0x02DC[0xC]; //0x02DC
+public:
+	float fRecoil; //0x02E8 
+private:
+	char pad_0x02EC[0x37C]; //0x02EC
+public:
+	float fFireRate; //0x0668 
+private:
+	char pad_0x066C[0x1D4]; //0x066C
+
+
+}; //Size=0x0840
+
+/*{
+public:
+private:
+	char pad_0x0000[0x148]; //0x0000
+public:
+	unsigned char bFireMode; //0x0148 
+private:
+	char pad_0x0149[0x27]; //0x0149
+public:
+	DWORD dMagAmmo; //0x0170 
+	DWORD dReserveAmmo; //0x0174 
+private:
 	char pad_0x0178[0x138]; //0x0178
 public:
 	float fMaxSpread; //0x02B0 
@@ -127,12 +184,12 @@ private:
 public:
 	float fRecoil; //0x02E8 
 private:
-	char pad_0x02EC[0x378]; //0x02EC
+	char pad_0x02EC[0x37c]; //0x02EC
 public:
 	float fFireRate; //0x0664 
 
 }; //Size=0x0668
-
+*/
 class WeaponManager
 {
 public:
@@ -282,11 +339,14 @@ private:
 class EntityList
 {
 public:
-	Entity * pFirstEntity; //0x0000 
+	Entity * pEntity_1; //0x0000 
+	Entity* pEntity_2; //0x0008 
+	Entity* pEntity_3; //0x0010 
+	Entity* pEntity_4; //0x0018 
 private:
-	char pad_0x0008[0x400]; //0x0008
+	char pad_0x0020[0x358]; //0x0020
 
-}; //Size=0x0408
+}; //Size=0x0378
 
 class LocalPlayerManager
 {
@@ -360,7 +420,6 @@ private:
 	char pad_0x0178[0x290]; //0x0178
 
 }; //Size=0x0408
-
 
 class ChatEngine
 {

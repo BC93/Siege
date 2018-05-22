@@ -25,29 +25,27 @@ bool Hacks::Init()
 
 	if (!*(WeaponManager **)(this->Base + WEAP_OFFSET))
 	{
+		printf("[!] cWeaponManager Failed!\n");
 		return false;
 	}
 
-	WeaponManager * cWeaponManager = *(WeaponManager **)(this->Base + WEAP_OFFSET);
+	this->cWeaponManager = *(WeaponManager **)(this->Base + WEAP_OFFSET);
 
-	if (!(cWeaponManager->pWeaponOffset))
+	if (!(this->cWeaponManager->pWeaponOffset))
 	{
+		printf("[!] pWeaponOffset Failed\n");
 		return false;
 	}
 	
-	if (!(cWeaponManager->pWeaponOffset->pWeaponComponent))
+	if (!(this->cWeaponManager->pWeaponOffset->pWeaponComponent))
 	{
-		return false;
-	}
-	if (!(cWeaponManager->pWeaponOffset->pWeaponComponent->dMagAmmo));
-	{
+		printf("[!] pWeaponComponent Failed!\n");
 		return false;
 	}
 
-	pWeap = cWeaponManager->pWeaponOffset->pWeaponComponent;
+	this->pWeap = cWeaponManager->pWeaponOffset->pWeaponComponent;
 
 	return true;
-
 }
 
 void Hacks::Toggles(WeaponComponent *pWeap)
@@ -78,6 +76,7 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 	}
 	if (GetAsyncKeyState(VK_NUMPAD4))
 	{
+		printf("NUMPAD 4 Pressed\n");
 		switch (this->dFireMode)
 		{
 		case 0:
@@ -92,9 +91,72 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 
 		case 3:
 			pWeap->bFireMode = 0;
+			Sleep(200);
 
 		}
 	}
+				printf("NUMPAD 9 Pressed\n");
+					Sleep(100);
+				if (GetAsyncKeyState(VK_UP) && GetAsyncKeyState(VK_NUMPAD9))
+				{
+					printf("Up Pressed\n");
+					this->sMagAmmo = this->sMagAmmo + 10;
+
+					Sleep(100);
+
+					return;
+				}
+				if (GetAsyncKeyState(VK_DOWN))
+				{
+					this->sMagAmmo = this->sMagAmmo - 10;
+					printf("Down Pressed\n");
+
+					Sleep(100);
+
+					return;
+				}
+				if (GetAsyncKeyState(VK_RIGHT) )
+				{
+					this->fFov = this->fFov + 5;
+
+					printf("Right Pressed\n");
+					this->SetFOV();
+
+					Sleep(100);
+
+					return;
+				}
+				if (GetAsyncKeyState(VK_LEFT))
+				{
+					printf("Left Pressed\n");
+					this->fFov = this->fFov - 5;
+
+					this->SetFOV();
+
+					Sleep(100);
+
+					return;
+				}
+			
+			if (GetAsyncKeyState(VK_UP))
+			{
+				printf("Up Pressed\n");
+				this->fSpreadVal = this->fSpreadVal + .10;
+
+				Sleep(100);
+
+				return;
+			}
+			if (GetAsyncKeyState(VK_DOWN))
+			{
+				printf("Down Pressed\n");
+				this->fSpreadVal= 0.2;
+
+				Sleep(100);
+
+				return;
+			}
+
 }
 void Hacks::NameManagerInit(char * name)
 {
@@ -187,54 +249,21 @@ void Hacks::GetEntities()
 	{
 		return;
 	}
-	for (int i=0; i = cGameManager->NumEntities; i ++)
+	
+
+}
+
+void Hacks::SetFOV()
+{
+	if (!*(FovManager **)(this->Base + OFFSET_FOV))
 	{
-		Entity * curEntity = *(Entity **)(cGameManager->pEntityList + (0x08 * i));
-
-		if (!(curEntity->pEntityRef))
-		{
-			continue;
-		}
-		if (!(curEntity->pEntityRef->pEntityInfo))
-		{
-			continue;
-		}
-		if (!(curEntity->pEntityRef->pEntityInfo->pEntityComponent))
-		{
-			continue;
-		}
-		if (!(curEntity->pEntityRef->pEntityInfo->pEntityComponent->pChildComponent	))
-		{
-			continue;
-		}
-		//check if entity alive
-		if (!(curEntity->pEntityRef->pEntityInfo->pEntityComponent->pChildComponent->dEntityHealth >= 0))
-		{
-			continue;
-		}	
-		if (!(curEntity->pEntityRef->pRef))
-		{
-			continue;
-		}	
-		if (!(curEntity->pEntityRef->pRef->pPlayerInfo))
-		{
-			continue;
-		}	
-		if (!(curEntity->pEntityRef->pRef->pPlayerInfo->pPlayerName))
-		{
-			continue;
-		}
-		if (!(curEntity->pEntityRef->pRef->pPlayerInfo->pPlayerName ))
-		{
-			continue;
-		}
-		printf("Entity Name: %s\n", (char *) *curEntity->pEntityRef->pRef->pPlayerInfo->pPlayerName);
-		printf("Entity Name: %c\n", curEntity->pEntityRef->pRef->pPlayerInfo->pPlayerName);
-
-
-
+		return;
 	}
+	FovManager * cFovManager = *(FovManager **)(this->Base + OFFSET_FOV);
 
+	cFovManager->fFOV_1 = this->fFov;
+
+	cFovManager->fFOV_2 = this->fFov;
 }
 
 void Hacks::Hack()
@@ -244,45 +273,29 @@ void Hacks::Hack()
 	HookConsole();
 	while (true)
 	{
-
-	this->Base = (DWORD_PTR)GetModuleHandleA("RainbowSix.exe");
-
-
-	if (!*(WeaponManager **)(Base + WEAP_OFFSET))
-	{
-		printf("[!] Weapon Manager Not Found!\n");
-		Sleep(1000);
-		return ;
-	}
-
-	WeaponManager * cWeaponManager = *(WeaponManager **)(Base + WEAP_OFFSET);
-
-	if (!(cWeaponManager->pWeaponOffset))
-	{
-		printf("[!] pWeaponOffset Not Found!\n");
-		Sleep(1000);
-		return ;
-	}
-	
-	if (!(cWeaponManager->pWeaponOffset->pWeaponComponent))
-	{
-		printf("[!] pWeaponComponent Not Found\n!");
-		Sleep(1000);
-		return ;
-	}
-
-		WeaponComponent *pWeap;
-		pWeap = cWeaponManager->pWeaponOffset->pWeaponComponent;
-
+		bool inGame;
+		inGame = this->Init();
+		while (inGame == false)
+		{
+			inGame = this->Init();
+			printf("[-----------------] Not in Game or Dead!\n");
+			Sleep(1000);
+		}
+		if (inGame == true)
+		{
 
 		this->Toggles(pWeap);
 
+		this->SetFOV();
 		pWeap->fMaxRecoil = 0;
 
 
 		pWeap->fRecoil = 0;
 
-		pWeap->fMaxSpread = 0.125;
+		this->pWeap->fMaxSpread = fSpreadVal;
+		this->pWeap->vSpread.x = fSpreadVal;
+		this->pWeap->vSpread.y = fSpreadVal;
+		this->pWeap->vSpread.z = fSpreadVal;
 
 		if (this->bFireRate)
 		{
@@ -291,16 +304,18 @@ void Hacks::Hack()
 
 		if (this->bNoReload )
 		{
-			pWeap->dMagAmmo = 25;
+			pWeap->dMagAmmo = this->sMagAmmo;
 		}
 
 		if (this->bInfiniteAmmo)
 		{
 			pWeap->dReserveAmmo = 250;
 		}
-		this->GetEntities();
-		Hacks Chat;
+
+		//this->GetEntities();
+		//Hacks Chat;
 		//this->GetMessageW();
 		//this->NameManagerInit((char *) "test");
+	}
 	}
 }
