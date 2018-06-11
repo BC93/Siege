@@ -13,13 +13,21 @@
 #include <cstring>
 #include <vector>
 
+void leftclick() {
+
+	mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, NULL, NULL);
+	std::this_thread::sleep_for(std::chrono::milliseconds(25));
+	mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, NULL, NULL);
+
+}
+
 void HookConsole()
 {
 	AllocConsole();
 	FILE* file;
 	freopen_s(&file, "CONOUT$", "w", stdout);
 }
-bool Hacks::Init()
+bool Hacks::GetWeap()
 {
 	this->Base = (DWORD_PTR)GetModuleHandleA("RainbowSix.exe");
 
@@ -31,20 +39,29 @@ bool Hacks::Init()
 
 	this->cWeaponManager = *(WeaponManager **)(this->Base + WEAP_OFFSET);
 
-	if (!(this->cWeaponManager->pWeaponOffset))
+	if (!(this->cWeaponManager->pRef))
 	{
 		printf("[!] pWeaponOffset Failed\n");
 		return false;
 	}
 	
-	if (!(this->cWeaponManager->pWeaponOffset->pWeaponComponent))
+	if (!(this->cWeaponManager->pRef->pRef))
+	{
+		printf("[!] pWeaponComponent Failed!\n");
+		return false;
+	}
+if (!(this->cWeaponManager->pRef->pRef->pRef))
 	{
 		printf("[!] pWeaponComponent Failed!\n");
 		return false;
 	}
 
-	this->pWeap = cWeaponManager->pWeaponOffset->pWeaponComponent;
-
+if (!(this->cWeaponManager->pRef->pRef->pRef->pWeaponComponent))
+	{
+		printf("[!] pWeaponComponent Failed!\n");
+		return false;
+	}
+	this->pWeap = cWeaponManager->pRef->pRef->pRef->pWeaponComponent;
 	return true;
 }
 
@@ -77,7 +94,7 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 	if (GetAsyncKeyState(VK_NUMPAD4))
 	{
 		printf("NUMPAD 4 Pressed\n");
-		switch (this->dFireMode)
+		/*switch (this->dFireMode)
 		{
 		case 0:
 			pWeap->bFireMode = 1;
@@ -93,12 +110,21 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 			pWeap->bFireMode = 0;
 			Sleep(200);
 
-		}
+		}*/
 	}
 				if (GetAsyncKeyState(VK_UP) && GetAsyncKeyState(VK_SHIFT))
 				{
 					printf("Up Pressed\n");
 					this->sMagAmmo = this->sMagAmmo + 10;
+
+					Sleep(100);
+
+					return;
+				}
+				if (GetAsyncKeyState(VK_NUMPAD6) )
+				{
+					printf("Numpad 6 Pressed\n");
+					this->bTriggerBot = !this->bTriggerBot;
 
 					Sleep(100);
 
@@ -118,7 +144,7 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 					this->fFov = this->fFov + 5;
 
 					printf("Right Pressed\n");
-					this->SetFOV();
+					//this->SetFOV();
 
 					Sleep(100);
 
@@ -129,7 +155,7 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 					printf("Left Pressed\n");
 					this->fFov = this->fFov - 5;
 
-					this->SetFOV();
+					//this->SetFOV();
 
 					Sleep(100);
 
@@ -148,7 +174,16 @@ void Hacks::Toggles(WeaponComponent *pWeap)
 			if (GetAsyncKeyState(VK_DOWN))
 			{
 				printf("Down Pressed\n");
-				this->fSpreadVal= 0.2;
+				this->fSpreadVal= this->fSpreadVal - 0.10;
+
+				Sleep(100);
+
+				return;
+			}
+			if (GetAsyncKeyState(VK_DOWN) && GetAsyncKeyState(VK_SHIFT))
+			{
+				printf("Down Pressed\n");
+				this->fSpreadVal = 0.2;
 
 				Sleep(100);
 
@@ -169,7 +204,7 @@ void Hacks::NameManagerInit(char * name)
 		return;
 	}
 	this->cNameManager = cNameEngine->pRef->pRef->pRef->pNameChange;
-	
+
 	//*cNameEngine->pRef->pRef->pRef->pNameChange->cName = (CHAR*)"test\0";
 }
 
@@ -182,7 +217,7 @@ void Hacks::GetMessage()
 	}
 	ChatEngine *cChatEngine = *(ChatEngine **)(Base + CHAT_OFFSET);
 
-	if (! (cChatEngine->pChatManager))
+	if (!(cChatEngine->pChatManager))
 	{
 		return;
 	}
@@ -190,20 +225,20 @@ void Hacks::GetMessage()
 	//printf("[+] Chat: %s\n", cChatEngine->pChatManager->cMessage);
 	char isCommand[] = "/";
 	int next = 0;
-	if ( *cChatEngine->pChatManager->cMessage == *isCommand)
+	if (*cChatEngine->pChatManager->cMessage == *isCommand)
 	{
 		ChatCommand sCommand;
 		char * pch;
-		printf("[+] Chat Command Received: %c\n",*cChatEngine->pChatManager->cMessage);
+		printf("[+] Chat Command Received: %c\n", *cChatEngine->pChatManager->cMessage);
 		char *sMessage = cChatEngine->pChatManager->cMessage;
 		std::string delimeter = " ";
 		printf("Message: %s\n", sMessage);
 		size_t pos = 0;
 		std::string token;
 		int count = 0;
-		printf("[-] DEBUG - Processing Command:%s\n",sMessage );
+		printf("[-] DEBUG - Processing Command:%s\n", sMessage);
 		Sleep(1000);
-		
+
 
 		pch = strtok(sMessage, " ");
 		while (pch != NULL)
@@ -222,11 +257,11 @@ void Hacks::GetMessage()
 			}
 			if (count == 3)
 			{
-					printf("================ Chat Command Received ==============\n");
-					printf("[+] Setting Name To: %c\n", *pch);
-					printf("[+] Setting Name To: %c\n", pch);
-					printf("[+] Setting Name To: %s\n", &pch);
-					//this->NameManagerInit(pch);
+				printf("================ Chat Command Received ==============\n");
+				printf("[+] Setting Name To: %c\n", *pch);
+				printf("[+] Setting Name To: %c\n", pch);
+				printf("[+] Setting Name To: %s\n", &pch);
+				//this->NameManagerInit(pch);
 
 			}
 		}
@@ -247,7 +282,7 @@ void Hacks::GetEntities()
 	{
 		return;
 	}
-	
+
 
 }
 
@@ -263,6 +298,53 @@ void Hacks::SetFOV()
 
 	cFovManager->fFOV_2 = this->fFov;
 }
+bool Hacks::Init()
+{
+	this->Base = (DWORD_PTR)GetModuleHandleA("RainbowSix.exe");
+	if (!*(GameStatus **)(this->Base + OFFSET_GAMESTATUS))
+	{
+		return false;
+	}
+
+	this->cGameStatus = *(GameStatus **)(this->Base + OFFSET_GAMESTATUS);
+	cGameStatus = *(GameStatus **)(this->Base + OFFSET_GAMESTATUS);
+	switch (cGameStatus->bInGame)
+	{
+	case 1:
+		return true;
+	default:
+		return false;
+
+	}
+}
+
+bool Hacks::GetTrigger()
+{
+
+	if (this->bTriggerBot)
+	{
+		if (!*(TriggerManager**)(this->Base + OFFSET_TRIGGERMANAGER))
+		{
+			return false;
+		}
+		this->cTriggerManager = *(TriggerManager **)(this->Base + OFFSET_TRIGGERMANAGER);
+
+		if (!(cTriggerManager->pRef))
+		{
+			return false;
+		}
+		if (!(cTriggerManager->pRef->pTriggerComponent))
+		{
+			return false;
+		}
+		if (this->cTriggerManager->pRef->pTriggerComponent->dTrigger == 1)
+		{
+			leftclick();
+			return true;
+		}
+		return false;
+	}
+}
 
 void Hacks::Hack()
 {
@@ -271,21 +353,20 @@ void Hacks::Hack()
 	HookConsole();
 	while (true)
 	{
-		bool inGame;
-		inGame = this->Init();
-		while (inGame == false)
-		{
-			inGame = this->Init();
-			printf("[-----------------] Not in Game or Dead!\n");
-			Sleep(1000);
-		}
-		if (inGame == true)
+		if (this->Init())
 		{
 
 		this->Toggles(pWeap);
-
-		this->SetFOV();
-		pWeap->fMaxRecoil = 0;
+			if (this->GetWeap())
+			{
+				printf("Address of pWeap is %p\n", this->pWeap);
+				printf("Address of &pWeap is %p\n", &this->pWeap);
+				this->pWeap->fRecoil = 0.00;
+				this->pWeap->fSpread = this->fSpreadVal;
+				this->GetTrigger();
+			}
+		//this->SetFOV();
+		/*pWeap->fMaxRecoil = 0;
 
 
 		pWeap->fRecoil = 0;
@@ -309,7 +390,7 @@ void Hacks::Hack()
 		{
 			pWeap->dReserveAmmo = 250;
 		}
-
+*/
 		//this->GetEntities();
 		//Hacks Chat;
 		//this->GetMessageW();

@@ -2,6 +2,123 @@
 #include "Vector3.h"
 #include <string>
 
+
+
+class WeaponManager;
+class WeaponOffset_0;
+class WeaponOffset_1;
+class WeaponOffset_2;
+class WeaponComponent;
+class GameStatus;
+class TriggerManager;
+class TriggerOffset_0;
+class TriggerComponent;
+
+class WeaponManager
+{
+public:
+private:
+	char pad_0x0000[0x20]; //0x0000
+public:
+	WeaponOffset_0 * pRef; //0x0020 
+
+}; //Size=0x0028
+
+class WeaponOffset_0
+{
+public:
+private:
+	char pad_0x0000[0xE0]; //0x0000
+public:
+	WeaponOffset_1 * pRef; //0x00E0 
+
+}; //Size=0x00E8
+
+class WeaponOffset_1
+{
+public:
+private:
+	char pad_0x0000[0x120]; //0x0000
+public:
+	WeaponOffset_2 * pRef; //0x0120 
+
+}; //Size=0x0128
+
+class WeaponOffset_2
+{
+public:
+private:
+	char pad_0x0000[0x110]; //0x0000
+public:
+	WeaponComponent * pWeaponComponent; //0x0110 
+
+}; //Size=0x0118
+
+class WeaponComponent
+{
+public:
+private:
+	char pad_0x0000[0x70]; //0x0000
+public:
+	float fSpread; //0x0070 
+private:
+	char pad_0x0074[0x34]; //0x0074
+public:
+	float fRecoil; //0x00A8 
+private:
+	char pad_0x00AC[0x10]; //0x00AC
+public:
+	Vector3 vRecoil; //0x00BC 
+private:
+	char pad_0x00C8[0x34C]; //0x00C8
+
+}; //Size=0x0414
+class GameStatus
+{
+public:
+private:
+	char pad_0x0000[0x38C]; //0x0000
+public:
+	DWORD bInGame; //0x038C 
+private:
+	char pad_0x0390[0x4B4]; //0x0390
+
+}; //Size=0x0844
+
+
+class TriggerManager
+{
+public:
+private:
+	char pad_0x0000[0x400]; //0x0000
+public:
+	TriggerOffset_0 * pRef; //0x0400 
+
+}; //Size=0x0408
+
+class TriggerOffset_0
+{
+public:
+private:
+	char pad_0x0000[0x398]; //0x0000
+public:
+	TriggerComponent * pTriggerComponent; //0x0398 
+
+}; //Size=0x03A0
+
+class TriggerComponent
+{
+public:
+private:
+	char pad_0x0000[0x1F4]; //0x0000
+public:
+	DWORD dTrigger; //0x01F4 
+private:
+	char pad_0x01F8[0x214]; //0x01F8
+
+}; //Size=0x040C
+
+
 class WeaponComponent;
 class WeaponManager;
 class WeaponOffset;
@@ -36,11 +153,14 @@ class FovManager;
 class Hacks
 {
 public:
+	GameStatus * cGameStatus;
+	TriggerManager * cTriggerManager;
 	char cName[10];
 	NameChange *cNameManager; 
 	bool bFireRate = false;
 	bool bNoReload = false;
 	bool bInfiniteAmmo = false;
+	bool bTriggerBot = false;
 	float fFov = 100;
 	float fSpreadVal = 0.5;
 	DWORD sMagAmmo = 25;
@@ -59,6 +179,8 @@ public:
 	char Message[20];
 	void GetMessage();
 	void Command();
+	bool GetWeap();
+	bool GetTrigger();
 };
 
 class FovManager
@@ -121,7 +243,7 @@ struct ChatCommand
 	std::string Module; 
 	CHAR Target[10];
 };
-
+/*
 class WeaponComponent
 {
 public:
@@ -160,6 +282,7 @@ private:
 
 }; //Size=0x0840
 
+ */
 /*{
 public:
 private:
@@ -190,7 +313,7 @@ public:
 
 }; //Size=0x0668
 */
-class WeaponManager
+/*class WeaponManager
 {
 public:
 private:
@@ -211,7 +334,7 @@ public:
 	WeaponComponent * pWeaponComponent; //0x00C8 
 
 }; //Size=0x00D0
-
+*/
 class Entity
 {
 public:
@@ -444,3 +567,5 @@ private:
 	char pad_0x01F4[0x214]; //0x01F4
 
 };
+
+
